@@ -1,0 +1,44 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'jacoco'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.sherter.google-java-format' version '0.8'
+    id 'com.github.ksoichiro.console.reporter' version '0.6.2'
+}
+
+group = 'com.doit.pubsubtest'
+version = '1.0.0'
+def beamVersion = "2.23.0"
+def slf4jVersion = "1.7.30"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.apache.beam:beam-sdks-java-core:$beamVersion")
+    implementation("org.apache.beam:beam-runners-direct-java:$beamVersion")
+    implementation("org.apache.beam:beam-runners-google-cloud-dataflow-java:$beamVersion")
+    implementation("org.apache.beam:beam-sdks-java-io-google-cloud-platform:$beamVersion")
+    implementation('com.google.cloud:google-cloud-bigquery:1.106.0')
+    implementation("org.slf4j:slf4j-jdk14:$slf4jVersion")
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+}
+
+mainClassName = "com.doit.pubsubtest.PubSubToBigQuery"
+
+// Shadow Stuff
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName,
+        'Implementation-Version': version,
+        'Class-Path': configurations.runtimeClasspath.files.collect { "lib/$it.name" }.join(' ')
+    }
+ from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {}
+}
+
+shadowJar {
+  archiveName = "${baseName}-${version}.${extension}"
+  mergeServiceFiles()
+}

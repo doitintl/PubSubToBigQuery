@@ -1,0 +1,13 @@
+set -a
+
+###
+# Sample .envrc file containing all environment variables
+###
+git config --local user.email <email>
+git config --local user.name <username>
+
+export GOOGLE_APPLICATION_CREDENTIALS=<path to key>
+
+export BUCKET_NAME=gs://<BUCKET_NAME>
+
+export PROJECT_ID=<project id>
